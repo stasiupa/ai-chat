@@ -1,4 +1,5 @@
 import SideBar from "@/Components/SideBar";
+import Login from "@/Components/Login";
 
 import { SessionProvider } from "@/Components/SessionProvider";
 import { getServerSession } from "next-auth";
@@ -6,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 import "../styles/globals.css";
+import ClientProvider from "@/Components/ClientProvider";
 
 export const metadata = {
   title: "Ai-Chat Clone",
@@ -18,17 +20,26 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+
+  console.log(session);
+
   return (
     <html lang="en">
       <body>
         <SessionProvider session={session}>
-          <div className="flex">
-            <div className="bg-[#202123] max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
-              <SideBar />
+          {!session ? (
+            <Login />
+          ) : (
+            <div className="flex">
+              <div className="bg-[#202123] max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
+                <SideBar />
+              </div>
+              {/* Client Provider - Notification */}
+
+              <ClientProvider />
+              <div className="bg-[#343541] flex-1">{children}</div>
             </div>
-            {/* Client Provider - Notification */}
-            <div className="bg-[#343541] flex-1">{children}</div>
-          </div>
+          )}
         </SessionProvider>
       </body>
     </html>
