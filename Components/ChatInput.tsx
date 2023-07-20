@@ -6,6 +6,8 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import ModelSelection from "./ModelSelection";
+import useSWR from "swr";
 
 type Props = {
   chatId: string;
@@ -16,8 +18,11 @@ function ChatInput({ chatId }: Props) {
   const { data: session } = useSession();
 
   //useSSWR to get model
+  const { data: model, mutate: setModel } = useSWR("model", {
+    fallbackData: "text-davinci-003",
+  });
 
-  const model = "text-davinci-003";
+  // const model = "text-davinci-003";
 
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,11 +68,9 @@ function ChatInput({ chatId }: Props) {
         session,
       }),
     }).then(() => {
-      //Toast notification to say successfull\
-      toast.success("ChatGPT has responed!"),
-        {
-          id: notification,
-        };
+      toast.success("ChatGPT has responed!", {
+        id: notification,
+      });
     });
   };
 
@@ -90,7 +93,9 @@ function ChatInput({ chatId }: Props) {
           <PaperAirplaneIcon className="h-4 w-4 -rotate-45" />
         </button>
       </form>
-      <div>{/* Model Selection */}</div>
+      <div className="md:hidden">
+        <ModelSelection />
+      </div>
     </div>
   );
 }

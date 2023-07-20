@@ -7,6 +7,7 @@ import { db } from "@/firebase";
 
 import NewChat from "./NewChat";
 import ChatRow from "./ChatRow";
+import ModelSelection from "./ModelSelection";
 
 function SideBar() {
   const { data: session } = useSession();
@@ -14,20 +15,25 @@ function SideBar() {
   const [chats, loading] = useCollection(
     session && collection(db, "users", session.user?.email!, "chats")
   );
-  console.log(chats);
+  // console.log(chats);
   return (
     <div className="p-2 flex flex-col h-screen">
       <div className="flex-1">
         <div>
-          <div>
-            {/* NewChat */}
-            <NewChat />
+          <NewChat />
+          <div className="hidden sm:inline">
+            <ModelSelection />
           </div>
-          <div>{/* Model Selection */}</div>
-          {/* Map through ChatRows */}
-          {chats?.docs.map((chat) => (
-            <ChatRow key={chat.id} id={chat.id} />
-          ))}
+          <div className="flex flex-col space-y-2 my-2">
+            {loading && (
+              <div className="animate-pulse text-center text-white">
+                Loading Chats
+              </div>
+            )}
+            {chats?.docs.map((chat) => (
+              <ChatRow key={chat.id} id={chat.id} />
+            ))}
+          </div>
         </div>
       </div>
       {session && (
