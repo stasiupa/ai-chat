@@ -18,7 +18,7 @@ function ChatInput({ chatId }: Props) {
   const { data: session } = useSession();
 
   //useSSWR to get model
-  const { data: model, mutate: setModel } = useSWR("model", {
+  const { data: model } = useSWR("model", {
     fallbackData: "text-davinci-003",
   });
 
